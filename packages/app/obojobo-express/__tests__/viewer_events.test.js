@@ -1,4 +1,6 @@
 jest.mock('../config')
+jest.mock('../db')
+jest.mock('../logger')
 jest.mock('../viewer/viewer_state', () => ({ set: jest.fn() }))
 jest.mock('../obo_events', () => ({ on: jest.fn(), emit: jest.fn() }))
 jest.mock('../models/visit')
@@ -12,6 +14,14 @@ const mockEvent = {
 		open: 'yep'
 	}
 }
+const mockRedAlertEvent = {
+	...mockEvent,
+	payload: {
+		to: true
+	}
+}
+let db
+let logger
 let vs
 let ve
 let oboEvents
@@ -21,10 +31,13 @@ describe('viewer events', () => {
 	beforeAll(() => {})
 	afterAll(() => {})
 	beforeEach(() => {
+		jest.resetAllMocks()
 		jest.resetModules()
 		vs = oboRequire('viewer/viewer_state')
 		oboEvents = oboRequire('obo_events')
 		VisitModel = oboRequire('models/visit')
+		db = oboRequire('db')
+		logger = oboRequire('logger')
 	})
 	afterEach(() => {})
 
@@ -34,7 +47,8 @@ describe('viewer events', () => {
 		ve = oboRequire('viewer_events')
 		expect(oboEvents.on).toBeCalledWith('client:nav:open', expect.any(Function))
 		expect(oboEvents.on).toBeCalledWith('client:nav:close', expect.any(Function))
-		expect(oboEvents.on).toHaveBeenCalledTimes(2)
+		expect(oboEvents.on).toBeCalledWith('client:nav:setRedAlert', expect.any(Function))
+		expect(oboEvents.on).toHaveBeenCalledTimes(3)
 	})
 
 	test('executes next when included to support express middleware', () => {
@@ -93,6 +107,57 @@ describe('viewer events', () => {
 				false,
 				'mockResourceLinkId'
 			)
+		})
+	})
+
+	test('client:nav:setRedAlert (insert success)', () => {
+		expect.hasAssertions()
+
+		db.none.mockResolvedValue(null)
+
+		ve = oboRequire('viewer_events')
+		const [eventName, callback] = oboEvents.on.mock.calls[2]
+		expect(eventName).toBe('client:nav:setRedAlert')
+		expect(callback).toHaveLength(1)
+
+		return callback(mockRedAlertEvent).then(() => {
+			expect(db.none).toHaveBeenCalledTimes(1)
+			expect(logger.error).toHaveBeenCalledTimes(0)
+			expect(db.none).toBeCalledWith(
+				expect.stringContaining('INSERT INTO red_alert_status'),
+				expect.objectContaining({
+					userId: mockRedAlertEvent.userId,
+					draftId: mockRedAlertEvent.draftId,
+					isRedAlertEnabled: true
+				})
+			)
+		})
+	})
+
+	test('client:nav:setRedAlert (insert error)', () => {
+		expect.hasAssertions()
+
+		const message = 'error message'
+
+		db.none.mockRejectedValue(message)
+
+		ve = oboRequire('viewer_events')
+		const [eventName, callback] = oboEvents.on.mock.calls[2]
+		expect(eventName).toBe('client:nav:setRedAlert')
+		expect(callback).toHaveLength(1)
+
+		return callback(mockRedAlertEvent).then(() => {
+			expect(db.none).toHaveBeenCalledTimes(1)
+			expect(logger.error).toHaveBeenCalledTimes(1)
+			expect(db.none).toBeCalledWith(
+				expect.stringContaining('INSERT INTO red_alert_status'),
+				expect.objectContaining({
+					userId: mockRedAlertEvent.userId,
+					draftId: mockRedAlertEvent.draftId,
+					isRedAlertEnabled: true
+				})
+			)
+			expect(logger.error).toBeCalledWith('DB UNEXPECTED on red_alert_status.set', message, message)
 		})
 	})
 })

@@ -54,7 +54,9 @@ jest.mock('../../../src/scripts/viewer/util/nav-util', () => ({
 	getOrderedList: jest.fn(),
 	getNavTarget: jest.fn(),
 	close: jest.fn(),
-	open: jest.fn()
+	open: jest.fn(),
+	isRedAlertEnabled: jest.fn(),
+	setRedAlert: jest.fn()
 }))
 
 // NavStore
@@ -186,6 +188,56 @@ describe('Nav', () => {
 		const component = renderer.create(<Nav {...props} />)
 		const tree = component.toJSON()
 		expect(tree).toMatchSnapshot()
+	})
+
+	test('renders red alert classes appropriately (redAlert=true)', () => {
+		const redAlert = true
+		NavUtil.getOrderedList.mockReturnValueOnce(navItems)
+		NavUtil.isRedAlertEnabled.mockReturnValueOnce(redAlert)
+		const props = {
+			navState: {
+				redAlert
+			}
+		}
+		const component = renderer.create(<Nav {...props} />)
+		const tree = component.toJSON()
+		expect(tree.props.className).toEqual(expect.stringContaining('is-red-alert'))
+		expect(tree).toMatchSnapshot()
+	})
+
+	test('renders red alert classes appropriately (redAlert=false)', () => {
+		const redAlert = false
+		NavUtil.getOrderedList.mockReturnValueOnce(navItems)
+		NavUtil.isRedAlertEnabled.mockReturnValueOnce(redAlert)
+		const props = {
+			navState: {
+				redAlert
+			}
+		}
+		const component = renderer.create(<Nav {...props} />)
+		const tree = component.toJSON()
+		expect(tree.props.className).toEqual(expect.stringContaining('is-not-red-alert'))
+		expect(tree).toMatchSnapshot()
+	})
+
+	test('onClickRedAlert calls NavUtil.isRedAlertEnabled and NavUtil.setRedAlert', () => {
+		const redAlert = true
+		NavUtil.getOrderedList.mockReturnValueOnce(navItems)
+		NavUtil.isRedAlertEnabled.mockReturnValueOnce(redAlert)
+		const props = {
+			navState: {
+				redAlert
+			}
+		}
+		const component = mount(<Nav {...props} />)
+		component.instance().selfRef = {
+			current: {
+				contains: () => false
+			}
+		}
+		component.instance().onClickRedAlert()
+		expect(NavUtil.isRedAlertEnabled).toHaveBeenCalledWith(props.navState)
+		expect(NavUtil.setRedAlert).toHaveBeenCalledWith(redAlert)
 	})
 
 	test('onClick link checks NavUtil.canNavigate and changes the page', () => {

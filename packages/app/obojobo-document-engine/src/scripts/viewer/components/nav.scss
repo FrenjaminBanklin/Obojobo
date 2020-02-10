@@ -2,6 +2,7 @@
 
 .viewer--components--nav {
 	$color-nav-bg: #fbfbfb;
+	$color-nav-bg-red: #ff0000;
 	$color-nav-highlight: $color-obojobo-blue;
 	$color-nav-hover: darken($color-highlight, 25%);
 	$padding: 2rem;
@@ -394,6 +395,23 @@
 
 	&.is-not-open .viewer--components--logo {
 		opacity: 0;
+	}
+
+	@keyframes red-alert {
+		from {
+			background-color: $color-nav-bg;
+		}
+
+		to {
+			background-color: $color-nav-bg-red;
+		}
+	}
+
+	&.is-red-alert {
+		animation-name: red-alert;
+		animation-duration: 1s;
+		animation-iteration-count: infinite;
+		animation-direction: alternate;
 	}
 }
 
