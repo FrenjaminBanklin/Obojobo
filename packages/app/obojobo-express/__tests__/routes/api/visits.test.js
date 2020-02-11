@@ -54,7 +54,7 @@ describe('api visits route', () => {
 	beforeAll(() => {})
 	afterAll(() => {})
 	beforeEach(() => {
-		db.one.mockReset()
+		db.oneOrNone.mockReset()
 		insertEvent.mockReset()
 		caliperEvent().createViewerSessionLoggedInEvent.mockReset()
 		ltiUtil.retrieveLtiLaunch = jest.fn()
