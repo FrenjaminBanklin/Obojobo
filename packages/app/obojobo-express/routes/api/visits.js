@@ -65,7 +65,7 @@ router
 				throw 'Unable to start visit, visitId is no longer valid'
 			})
 			.then(() =>
-				db.one(
+				db.oneOrNone(
 					`
 						SELECT is_enabled FROM red_alert_status
 						WHERE

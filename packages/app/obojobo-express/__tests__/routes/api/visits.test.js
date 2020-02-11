@@ -456,7 +456,7 @@ describe('api visits route', () => {
 		ltiUtil.retrieveLtiLaunch.mockResolvedValueOnce(launch)
 
 		//this solves coverage but is not satisfying
-		db.one.mockResolvedValue(null)
+		db.oneOrNone.mockResolvedValue(null)
 
 		// resolve viewerState.get
 		viewerState.get.mockResolvedValueOnce('view state')
@@ -490,7 +490,7 @@ describe('api visits route', () => {
 		ltiUtil.retrieveLtiLaunch.mockResolvedValueOnce(launch)
 
 		//this solves coverage but is not satisfying
-		db.one.mockResolvedValue({ is_enabled: isRedAlertEnabled })
+		db.oneOrNone.mockResolvedValue({ is_enabled: isRedAlertEnabled })
 
 		// resolve viewerState.get
 		viewerState.get.mockResolvedValueOnce('view state')
@@ -503,8 +503,8 @@ describe('api visits route', () => {
 			.post('/api/start')
 			.send({ visitId: validUUID() })
 			.then(response => {
-				expect(db.one).toBeCalledTimes(1)
-				expect(db.one).toBeCalledWith(
+				expect(db.oneOrNone).toBeCalledTimes(1)
+				expect(db.oneOrNone).toBeCalledWith(
 					expect.stringContaining('SELECT is_enabled FROM red_alert_status'),
 					expect.objectContaining({
 						userId: mockCurrentUser.id,
