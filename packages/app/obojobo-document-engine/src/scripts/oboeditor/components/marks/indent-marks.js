@@ -1,9 +1,12 @@
 import IndentIcon from '../../assets/indent-icon'
 import UnindentIcon from '../../assets/unindent-icon'
+import HangingIndentIcon from '../../assets/hanging-indent-icon'
 
 const INDENT = 'indent'
 const UNINDENT = 'unindent'
+const HANGING_INDENT = 'hanging-indent'
 
+const TEXT_LINE_NODE = 'ObojoboDraft.Chunks.Text.TextLine'
 const CODE_LINE_NODE = 'ObojoboDraft.Chunks.Code.CodeLine'
 const LIST_LINE_NODE = 'ObojoboDraft.Chunks.List.Line'
 const LIST_LEVEL_NODE = 'ObojoboDraft.Chunks.List.Level'
@@ -93,6 +96,24 @@ const AlignMarks = {
 							return editor.unindentList(block)
 						default:
 							return editor.unindentText(block)
+					}
+				})
+		},
+		{
+			name: 'Hanging Indent',
+			type: HANGING_INDENT,
+			icon: HangingIndentIcon,
+			action: editor =>
+				editor.value.blocks.forEach(block => {
+					const dataJSON = block.data.toJSON()
+
+					switch (block.type) {
+						case TEXT_LINE_NODE:
+							dataJSON.hangingIndent = !dataJSON.hangingIndent
+							return editor.setNodeByKey(block.key, { data: dataJSON })
+						case LIST_LINE_NODE:
+							dataJSON.hangingIndent = !dataJSON.hangingIndent
+							return editor.setNodeByKey(block.key, { data: dataJSON })
 					}
 				})
 		}
