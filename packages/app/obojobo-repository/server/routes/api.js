@@ -20,6 +20,9 @@ const {
 	removeUserPermissionToDraft,
 	userHasPermissionToCopy
 } = require('../services/permissions')
+const {
+	getAttemptsForDraft
+} = require('../util/assessment-data-util')
 const publicLibCollectionId = require('../../shared/publicLibCollectionId')
 
 // List public drafts
@@ -217,6 +220,28 @@ router
 			// remove perms
 			await removeUserPermissionToDraft(userToRemove.id, draftId)
 			res.success()
+		} catch (error) {
+			res.unexpected(error)
+		}
+	})
+
+router
+	.route('/drafts/:draftId/assessments')
+	.get([requireCurrentUser,requireCurrentDocument,requireCanPreviewDrafts])
+	.get(async (req, res) => {
+		try {
+			const draftId = req.currentDocument.draftId
+
+			// check currentUser's permissions
+			const canViewScores = await userHasPermissionToDraft(req.currentUser.id, draftId)
+			if (!canViewScores) {
+				res.notAuthorized('Current User has no permissions to selected draft')
+				return
+			}
+
+			return getAttemptsForDraft(draftId)
+				.then(res.success)
+				.catch(res.unexpected)
 		} catch (error) {
 			res.unexpected(error)
 		}

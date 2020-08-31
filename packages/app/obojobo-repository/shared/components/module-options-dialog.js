@@ -8,6 +8,9 @@ const { urlForEditor } = require('../repository-utils')
 const {
 	downloadDocument
 } = require('obojobo-document-engine/src/scripts/common/util/download-document')
+const {
+	downloadAssessmentsForModule
+} = require('obojobo-document-engine/src/scripts/common/util/download-data')
 
 const deleteModule = (title, draftId, deleteFn) => {
 	const response = confirm(`Delete "${title}" id: ${draftId} ?`) //eslint-disable-line no-alert, no-undef
@@ -66,6 +69,15 @@ const ModuleOptionsDialog = props => (
 					Download XML
 				</Button>
 				<div className="label">Download a copy in XML format.</div>
+
+				<Button
+					onClick={() => {
+						downloadAssessmentsForModule(props.draftId)
+					}}
+				>
+					Assessment Data
+				</Button>
+				<div className="label">Download all assessment data for this module.</div>
 
 				<ButtonLink url={`/library/${props.draftId}`} target="_blank">
 					Public Page
