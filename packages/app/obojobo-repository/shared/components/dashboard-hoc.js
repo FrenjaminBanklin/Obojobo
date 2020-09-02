@@ -9,6 +9,7 @@ const {
 	filterModules,
 	deleteModule,
 	showModulePermissions,
+	showModuleDataFiles,
 	showVersionHistory,
 	restoreVersion,
 	importModuleFile
@@ -23,6 +24,7 @@ const mapActionsToProps = {
 	filterModules,
 	deleteModule,
 	showModulePermissions,
+	showModuleDataFiles,
 	showVersionHistory,
 	restoreVersion,
 	importModuleFile

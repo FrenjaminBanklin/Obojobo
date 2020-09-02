@@ -15,7 +15,8 @@ const {
 	FILTER_MODULES,
 	SHOW_MODULE_MORE,
 	SHOW_VERSION_HISTORY,
-	RESTORE_VERSION
+	RESTORE_VERSION,
+	SHOW_MODULE_DATA_FILES
 } = require('../actions/dashboard-actions')
 
 const searchPeopleResultsState = (isFetching = false, hasFetched = false, items = []) => ({
@@ -82,6 +83,13 @@ function DashboardReducer(state, action) {
 				dialog: 'module-permissions',
 				selectedModule: action.module,
 				searchPeople: searchPeopleResultsState()
+			}
+
+		case SHOW_MODULE_DATA_FILES:
+			return {
+				...state,
+				dialog: 'module-data-files',
+				selectedModule: action.module
 			}
 
 		case CLOSE_MODAL:

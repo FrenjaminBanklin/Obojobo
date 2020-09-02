@@ -7,6 +7,7 @@ const RepositoryNav = require('./repository-nav')
 const RepositoryBanner = require('./repository-banner')
 const Module = require('./module')
 const ModulePermissionsDialog = require('./module-permissions-dialog')
+const ModuleDataDialog = require('./module-data-dialog')
 const ModuleOptionsDialog = require('./module-options-dialog')
 const VersionHistoryDialog = require('./version-history-dialog')
 const Button = require('./button')
@@ -19,6 +20,7 @@ const renderOptionsDialog = props => (
 		title=""
 		{...props.selectedModule}
 		showModulePermissions={props.showModulePermissions}
+		showModuleDataFiles={props.showModuleDataFiles}
 		deleteModule={props.deleteModule}
 		onClose={props.closeModal}
 		showVersionHistory={props.showVersionHistory}
@@ -51,6 +53,14 @@ const renderVersionHistoryDialog = props => (
 	/>
 )
 
+const renderDataDialog = props => (
+	<ModuleDataDialog
+		title={`${props.selectedModule.title} - Data Export`}
+		{...props.selectedModule}
+		onClose={props.closeModal}
+	/>
+)
+
 const renderModalDialog = props => {
 	let dialog
 	let title
@@ -68,6 +78,11 @@ const renderModalDialog = props => {
 		case 'module-version-history':
 			title = 'Module Version History'
 			dialog = renderVersionHistoryDialog(props)
+			break
+
+		case 'module-data-files':
+			title = 'Module Data Export'
+			dialog = renderDataDialog(props)
 			break
 
 		default:

@@ -128,6 +128,12 @@ const showModulePermissions = module => ({
 	module
 })
 
+const SHOW_MODULE_DATA_FILES = 'SHOW_MODULE_DATA_FILES'
+const showModuleDataFiles = module => ({
+	type: SHOW_MODULE_DATA_FILES,
+	module
+})
+
 const SHOW_VERSION_HISTORY = 'SHOW_VERSION_HISTORY'
 const showVersionHistory = module => ({
 	type: SHOW_VERSION_HISTORY,
@@ -266,6 +272,7 @@ module.exports = {
 	SHOW_VERSION_HISTORY,
 	RESTORE_VERSION,
 	IMPORT_MODULE_FILE,
+	SHOW_MODULE_DATA_FILES,
 	filterModules,
 	deleteModule,
 	closeModal,
@@ -274,6 +281,7 @@ module.exports = {
 	addUserToModule,
 	createNewModule,
 	showModulePermissions,
+	showModuleDataFiles,
 	loadUsersForModule,
 	clearPeopleSearchResults,
 	showModuleMore,
