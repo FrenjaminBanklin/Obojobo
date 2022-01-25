@@ -7,6 +7,7 @@ const ltiLaunch = oboRequire('server/express_lti_launch')
 const { assetForEnv, webpackAssetPath } = oboRequire('server/asset_resolver')
 const {
 	checkValidationRules,
+	forbidAnonymousUser,
 	requireCurrentDocument,
 	requireVisitId,
 	requireCurrentVisit,
@@ -17,7 +18,7 @@ const {
 // mounted as /view/:draftId/:page
 router
 	.route('/:draftId/:page?')
-	.post([ltiLaunch.assignment, requireCurrentUser, requireCurrentDocument, checkValidationRules])
+	.post([ltiLaunch.assignment, forbidAnonymousUser, requireCurrentUser, requireCurrentDocument, checkValidationRules])
 	.post((req, res) => {
 		// Non students get redirected to preview mode
 		// This will prevent LTI users with a role of Learner
@@ -74,6 +75,7 @@ router
 router
 	.route('/:draftId/visit/:visitId*')
 	.get([
+		forbidAnonymousUser,
 		requireCurrentUser,
 		requireCurrentDocument,
 		requireVisitId,

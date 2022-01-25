@@ -59,6 +59,7 @@ export default class ViewerApp extends React.Component {
 			loading: true,
 			requestStatus: 'unknown',
 			isPreviewing: false,
+			isPublic: false,
 			lti: { outcomeServiceHostname: null },
 			viewSessionId: null
 		}
@@ -94,6 +95,7 @@ export default class ViewerApp extends React.Component {
 		let extensions
 		let viewState
 		let isPreviewing
+		let isPublic
 		let outcomeServiceURL = 'the external system'
 		let viewSessionId
 
@@ -112,6 +114,7 @@ export default class ViewerApp extends React.Component {
 				viewState = visit.value.viewState
 				extensions = visit.value.extensions
 				isPreviewing = visit.value.isPreviewing
+				isPublic = visit.value.isPublic
 				outcomeServiceURL = visit.value.lti.lisOutcomeServiceUrl
 
 				return ViewerAPI.getDraft(this.props.draftId)
@@ -155,6 +158,7 @@ export default class ViewerApp extends React.Component {
 						loading: false,
 						requestStatus: 'ok',
 						isPreviewing,
+						isPublic,
 						viewSessionId
 					},
 					() => {
@@ -660,6 +664,7 @@ export default class ViewerApp extends React.Component {
 
 		return (
 			isOrNot(s.isPreviewing, 'previewing') +
+			isOrNot(s.isPublic, 'public') +
 			isOrNot(s.navState.open, 'open-nav') +
 			isOrNot(s.navState.disabled, 'disabled-nav') +
 			isOrNot(visuallyFocussedModel, 'focus-state-active')
@@ -687,7 +692,7 @@ export default class ViewerApp extends React.Component {
 
 				{hideViewer ? null : this.renderViewer()}
 
-				{this.state.isPreviewing ? (
+				{this.state.isPreviewing && ! this.state.isPublic ? (
 					<div className="preview-banner">
 						<span>Preview mode</span>
 						<div className="controls">

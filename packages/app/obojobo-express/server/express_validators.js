@@ -20,6 +20,23 @@ const requireAndValidateReqMethod = (req, res, next, method, prop) => {
 		})
 }
 
+exports.allowAnonymousUser = (req, res, next) => {
+	req.session.anonymous = true
+	next()
+}
+exports.forbidAnonymousUser = (req, res, next) => {
+	req.session.anonymous = false
+	next()
+}
+
+// this should probably be another function in express_current_document
+//  containing logic to determine that the module being requested is
+//  in the community collection (or some other, to-be-determined
+//  collection that would allow that module to be viewed anonymously?)
+exports.requirePublicDocument = (req, res, next) => {
+	return true
+}
+
 // this is defined differently so it can be reused in other exports easily
 const requireCurrentUser = (req, res, next, permission = null) => {
 	return req

@@ -138,7 +138,7 @@
 		}
 	}
 
-	&.is-previewing {
+	&.is-previewing:not(.is-public) {
 		height: calc(100% - 3rem);
 	}
 

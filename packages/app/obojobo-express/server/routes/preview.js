@@ -4,6 +4,7 @@ const Visit = oboRequire('server/models/visit')
 const insertEvent = oboRequire('server/insert_event')
 const {
 	checkValidationRules,
+	forbidAnonymousUser,
 	requireCurrentDocument,
 	requireDraftId,
 	requireCanPreviewDrafts
@@ -13,7 +14,7 @@ const {
 // mounts at /preview/:draftId
 router
 	.route('/:draftId')
-	.get([requireCanPreviewDrafts, requireCurrentDocument, requireDraftId, checkValidationRules])
+	.get([forbidAnonymousUser, requireCanPreviewDrafts, requireCurrentDocument, requireDraftId, checkValidationRules])
 	.get((req, res) => {
 		let visitId
 		return Visit.createPreviewVisit(req.currentUser.id, req.currentDocument.draftId)

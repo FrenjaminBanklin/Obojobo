@@ -410,6 +410,6 @@
 	}
 }
 
-.is-previewing .viewer--components--nav {
+.is-previewing:not(.is-public) .viewer--components--nav {
 	bottom: 3em;
 }

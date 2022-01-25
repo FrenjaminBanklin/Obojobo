@@ -3,7 +3,7 @@ const User = require('./user')
 class GuestUser extends User {
 	constructor() {
 		super({
-			id: 0,
+			id: '0',
 			firstName: 'Guest',
 			lastName: 'Guest',
 			email: 'guest@obojobo.ucf.edu',

@@ -35,12 +35,13 @@ const getCurrentUser = async req => {
 
 // throws an error if:
 // A: currentUser ISNT a instance of USER
-// OR B: currentUser IS a guest
+// OR B: currentUser IS a guest AND the guest user is not allowed
 const requireCurrentUser = async req => {
 	const user = await req.getCurrentUser()
 
-	// isn't a user or is a guest?
-	if (!(user instanceof User) || user.isGuest()) {
+	// isn't a user or is an unpermitted guest?
+	if (!(user instanceof User)
+	|| (user.isGuest() && req.session && !req.session.anonymous) ) {
 		throw new Error('Login Required')
 	}
 

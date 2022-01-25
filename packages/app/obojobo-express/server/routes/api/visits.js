@@ -59,7 +59,7 @@ router
 				// eslint-disable-next-line no-extra-semi
 				;[viewState, visitStartExtensions] = results
 
-				if (req.currentVisit.is_preview === false) {
+				if (req.currentVisit.is_preview === false && req.currentVisit.is_public === false) {
 					if (req.currentVisit.draft_content_id !== req.currentDocument.contentId) {
 						// error so the student starts a new view w/ newer version
 						// this check doesn't happen in preview mode so authors
@@ -98,7 +98,7 @@ router
 
 				// Build lti data for return
 				const lti = { lis_outcome_service_url: null }
-				if (req.currentVisit.is_preview === false) {
+				if (req.currentVisit.is_preview === false && req.currentVisit.is_public === false) {
 					lti.lis_outcome_service_url = launch.reqVars.lis_outcome_service_url
 				}
 
@@ -109,6 +109,7 @@ router
 				res.success({
 					visitId: req.currentVisit.id,
 					isPreviewing: req.currentVisit.is_preview,
+					isPublic: req.currentVisit.is_public,
 					lti,
 					viewState,
 					extensions: visitStartExtensions

@@ -12,6 +12,7 @@ const deactivateOldVisitsAndCreateNewVisit = async ({
 	resourceLinkId,
 	launchId = null,
 	isPreview = false,
+	isPublic = false,
 	nodeOptions = { isScoreImportable: false }
 }) => {
 	return db.taskIf(async t => {
@@ -56,6 +57,7 @@ const deactivateOldVisitsAndCreateNewVisit = async ({
 					resource_link_id,
 					is_active,
 					is_preview,
+					is_public,
 					score_importable
 				)
 			VALUES (
@@ -66,6 +68,7 @@ const deactivateOldVisitsAndCreateNewVisit = async ({
 				$[resourceLinkId],
 				true,
 				$[isPreview],
+				$[isPublic],
 				$[isScoreImportable]
 			)
 			RETURNING id`,
@@ -76,6 +79,7 @@ const deactivateOldVisitsAndCreateNewVisit = async ({
 				resourceLinkId,
 				launchId,
 				isPreview,
+				isPublic,
 				isScoreImportable: nodeOptions.isScoreImportable
 			}
 		)
@@ -119,7 +123,7 @@ class Visit {
 		return db
 			.one(
 				`
-			SELECT id, user_id, is_active, is_preview, draft_id, draft_content_id, resource_link_id, score_importable
+			SELECT id, user_id, is_active, is_preview, is_public, draft_id, draft_content_id, resource_link_id, score_importable
 			FROM visits
 			WHERE id = $[visitId]
 			${requireIsActive ? 'AND is_active = true' : ''}
@@ -155,6 +159,18 @@ class Visit {
 			draftId,
 			resourceLinkId: 'preview',
 			isPreview: true
+		})
+	}
+
+	// create an anonymous visit
+	// deactivates all previous visits
+	static createAnonymousVisit(userId, draftId) {
+		return deactivateOldVisitsAndCreateNewVisit({
+			userId,
+			draftId,
+			resourceLinkId: 'public',
+			isPreview: true,
+			isPublic: true
 		})
 	}
 }
